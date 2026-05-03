@@ -59,7 +59,7 @@ Infraestructura local completa que implementa una aplicación con pipeline CI/CD
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/proyecto-final-devops.git
+git clone https://github.com/jrosasg/proyecto-final-devops.git
 cd proyecto-final-devops
 
 # 2. Configurar variables de entorno
