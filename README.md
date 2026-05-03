@@ -1,5 +1,5 @@
 ## Examen
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 - [Arquitectura](#arquitectura)
 - [Requisitos Previos](#requisitos-previos)
