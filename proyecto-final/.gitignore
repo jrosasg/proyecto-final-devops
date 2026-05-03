@@ -1,0 +1,31 @@
+# Secretos - NUNCA commitear
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+venv/
+
+# Docker volumes
+elasticsearch-data/
+prometheus-data/
+grafana-data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reportes de seguridad (contienen info sensible)
+security/reports/
+
+# Logs
+*.log

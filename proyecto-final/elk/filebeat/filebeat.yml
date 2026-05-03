@@ -1,0 +1,73 @@
+# ============================================================================
+# Filebeat - Recolección de logs de contenedores Docker
+# ============================================================================
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      templates:
+        # ── Logs de la aplicación Flask ──────────────────────────────
+        - condition:
+            contains:
+              docker.container.labels.app.role: "backend"
+          config:
+            - type: container
+              paths:
+                - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+              processors:
+                - decode_json_fields:
+                    fields: ["message"]
+                    target: "app"
+                    overwrite_keys: true
+                    add_error_key: true
+              fields:
+                service: "flask-app"
+                environment: "production"
+              fields_under_root: true
+
+        # ── Logs del load balancer Nginx ─────────────────────────────
+        - condition:
+            contains:
+              docker.container.labels.app.role: "loadbalancer"
+          config:
+            - type: container
+              paths:
+                - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+              processors:
+                - decode_json_fields:
+                    fields: ["message"]
+                    target: "nginx"
+                    overwrite_keys: true
+                    add_error_key: true
+              fields:
+                service: "nginx-lb"
+              fields_under_root: true
+
+# ── Procesadores globales ────────────────────────────────────────────
+processors:
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+  - add_host_metadata: ~
+  - drop_fields:
+      fields: ["agent.ephemeral_id", "agent.hostname", "agent.id", "agent.version", "agent.type", "ecs.version"]
+      ignore_missing: true
+
+# ── Output: Elasticsearch ────────────────────────────────────────────
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "filebeat-%{+yyyy.MM.dd}"
+
+# ── Setup: Index template ────────────────────────────────────────────
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+setup.ilm.enabled: false
+
+# ── Kibana (para dashboards predefinidos) ────────────────────────────
+setup.kibana:
+  host: "http://kibana:5601"
+
+# ── Logging de Filebeat ──────────────────────────────────────────────
+logging.level: info
+logging.to_stderr: true
+logging.metrics.enabled: false

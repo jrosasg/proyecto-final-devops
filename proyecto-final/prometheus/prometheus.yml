@@ -1,0 +1,48 @@
+# Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+# Reglas de alertamiento
+rule_files:
+  - "alert_rules.yml"
+
+# Targets a monitorear
+scrape_configs:
+  # ── Métricas de la aplicación Flask (3 instancias) ─────────────────
+  - job_name: "flask-app"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets:
+          - "app-1:5000"
+          - "app-2:5000"
+          - "app-3:5000"
+        labels:
+          environment: "production"
+          service: "flask-app"
+
+  # ── Métricas de Prometheus (self-monitoring) ───────────────────────
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # ── Métricas de Nginx (stub_status) ────────────────────────────────
+  # Nota: requiere nginx-prometheus-exporter para métricas detalladas
+  # Aquí usamos blackbox-style health check
+  - job_name: "nginx"
+    metrics_path: "/nginx-health"
+    static_configs:
+      - targets: ["nginx:80"]
+        labels:
+          service: "nginx-lb"
+
+  # ── Métricas de Elasticsearch ──────────────────────────────────────
+  - job_name: "elasticsearch"
+    metrics_path: "/_prometheus/metrics"
+    static_configs:
+      - targets: ["elasticsearch:9200"]
+        labels:
+          service: "elasticsearch"
+    # Es posible que ES no exponga /metrics; se ignora el error
+    scrape_interval: 30s

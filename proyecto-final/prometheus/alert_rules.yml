@@ -1,0 +1,62 @@
+# Reglas de alertamiento para Prometheus
+groups:
+  - name: aplicacion
+    rules:
+      # ── Alta tasa de errores (>5% en 5 minutos) ────────────────────
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(app_request_total{status=~"5.."}[5m]))
+            /
+            sum(rate(app_request_total[5m]))
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Alta tasa de errores HTTP 5xx"
+          description: "Más del 5% de requests están fallando en los últimos 5 minutos."
+
+      # ── Latencia alta (p95 > 1 segundo) ────────────────────────────
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(app_request_duration_seconds_bucket[5m])) by (le))
+          > 1.0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latencia alta detectada"
+          description: "El percentil 95 de latencia supera 1 segundo."
+
+      # ── Instancia caída ────────────────────────────────────────────
+      - alert: InstanceDown
+        expr: up{job="flask-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instancia {{ $labels.instance }} no responde"
+          description: "La instancia {{ $labels.instance }} lleva más de 1 minuto sin responder."
+
+      # ── Muchos requests activos simultáneos ────────────────────────
+      - alert: HighActiveRequests
+        expr: app_active_requests > 50
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Demasiados requests activos"
+          description: "Se detectan más de 50 requests concurrentes en {{ $labels.instance }}."
+
+  - name: infraestructura
+    rules:
+      # ── Prometheus target caído ────────────────────────────────────
+      - alert: TargetDown
+        expr: up == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Target {{ $labels.job }}/{{ $labels.instance }} caído"
+          description: "El target no responde a scraping desde hace 3 minutos."
