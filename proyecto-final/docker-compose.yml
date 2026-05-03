@@ -1,8 +1,6 @@
 # ============================================================================
-# Docker Compose - Plataforma Local de CI/CD, Observabilidad y Seguridad
-# ============================================================================
 # Servicios:
-#   - app-1, app-2, app-3    : Instancias de la aplicación Flask
+#   - app-1, app-2, app-3    : Instancias de la aplicación Flask, se requiere actualizar el key y password
 #   - nginx                  : Balanceador de carga / reverse proxy
 #   - prometheus              : Recolección de métricas
 #   - grafana                 : Dashboards de métricas
@@ -25,8 +23,8 @@ services:
       - HOSTNAME=app-1
       - PORT=5000
       - APP_VERSION=${APP_VERSION:-1.0.0}
-      - APP_SECRET_KEY=${APP_SECRET_KEY:-dev-secret-change-me}
-      - DB_PASSWORD=${DB_PASSWORD:-not-set}
+      - APP_SECRET_KEY=${APP_SECRET_KEY:-dev-secret}
+      - DB_PASSWORD=${DB_PASSWORD:}
     expose:
       - "5000"
     restart: unless-stopped
@@ -54,8 +52,8 @@ services:
       - HOSTNAME=app-2
       - PORT=5000
       - APP_VERSION=${APP_VERSION:-1.0.0}
-      - APP_SECRET_KEY=${APP_SECRET_KEY:-dev-secret-change-me}
-      - DB_PASSWORD=${DB_PASSWORD:-not-set}
+      - APP_SECRET_KEY=${APP_SECRET_KEY:-dev-secret}
+      - DB_PASSWORD=${DB_PASSWORD:}
     expose:
       - "5000"
     restart: unless-stopped
@@ -82,8 +80,8 @@ services:
       - HOSTNAME=app-3
       - PORT=5000
       - APP_VERSION=${APP_VERSION:-1.0.0}
-      - APP_SECRET_KEY=${APP_SECRET_KEY:-dev-secret-change-me}
-      - DB_PASSWORD=${DB_PASSWORD:-not-set}
+      - APP_SECRET_KEY=${APP_SECRET_KEY:-dev-secret}
+      - DB_PASSWORD=${DB_PASSWORD:}
     expose:
       - "5000"
     restart: unless-stopped
