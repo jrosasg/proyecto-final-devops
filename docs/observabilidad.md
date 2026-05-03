@@ -10,7 +10,7 @@ La aplicación genera logs en formato JSON estructurado con los siguientes campo
 
 ```json
 {
-  "timestamp": "2024-01-15T10:30:00.000Z",
+  "timestamp": "2026-05-02T10:30:00.000Z",
   "level": "INFO",
   "logger": "app",
   "message": "request",
