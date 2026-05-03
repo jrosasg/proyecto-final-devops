@@ -1,8 +1,8 @@
-# 🏗️ Plataforma Local de CI/CD, Observabilidad y Seguridad
+# Examen
 
 Infraestructura local completa que implementa una aplicación con pipeline CI/CD, monitoreo, observabilidad, prácticas DevSecOps y operaciones en producción.
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 - [Arquitectura](#arquitectura)
 - [Requisitos Previos](#requisitos-previos)
